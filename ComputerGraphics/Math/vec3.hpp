@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cmath>
+#include <iostream>
 
 template<typename T>
 struct Vec3
@@ -74,6 +75,11 @@ struct Vec3
 
 		T invLen = 1 / len;
 		v = v * invLen;
+	}
+
+	friend std::ostream& operator << (std::ostream& s, const Vec3<T>& v)
+	{
+		return s << '(' << v.x << ", " << v.y << ", " << v.z << ')';
 	}
 };
 

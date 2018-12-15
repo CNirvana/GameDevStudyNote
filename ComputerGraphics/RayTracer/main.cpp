@@ -1,5 +1,6 @@
 #include "scene.h"
 #include "sphere.h"
+#include "mat4.hpp"
 
 const int screenWidth = 640;
 const int screenHieght = 480;
