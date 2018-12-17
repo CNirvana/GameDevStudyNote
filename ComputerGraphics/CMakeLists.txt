@@ -11,4 +11,10 @@ file(GLOB SOURCES
     RayTracer/*.h
     RayTracer/*.cpp
 )
-add_executable(RayTracer ${SOURCES} ${MATH_SOURCES})
+add_executable(RayTracer ${SOURCES})
+
+file(GLOB SOURCES
+    SoftwareRenderer/*.h
+    SoftwareRenderer/*.cpp
+)
+add_executable(SoftwareRenderer ${SOURCES})

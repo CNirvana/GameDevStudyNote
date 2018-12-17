@@ -6,9 +6,17 @@
 template<typename T>
 struct Vec3
 {
-	T x;
-	T y;
-	T z;
+	
+	union
+	{
+		struct
+		{
+			T x;
+			T y;
+			T z;
+		};
+		T raw[3];
+	};
 
 	Vec3();
 	Vec3(T _x, T _y, T _z);
