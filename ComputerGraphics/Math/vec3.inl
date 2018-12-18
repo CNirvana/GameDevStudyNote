@@ -74,6 +74,12 @@ Vec3<T>& operator *= (Vec3<T>& left, T right)
 }
 
 template<typename T>
+T operator * (const Vec3<T>& left, const Vec3<T>& right)
+{
+	return left.dot(right);
+}
+
+template<typename T>
 Vec3<T> operator / (const Vec3<T>& left, T right)
 {
 	// assert right != 0
