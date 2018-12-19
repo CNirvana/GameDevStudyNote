@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 11)
 
 project(ComputerGraphics)
 
-include_directories("${PROJECT_SOURCE_DIR}/Math")
+include_directories(${PROJECT_SOURCE_DIR}/Math)
 
 file(GLOB SOURCES
     RayTracer/*.h
