@@ -14,6 +14,7 @@ include_directories(${PROJECT_SOURCE_DIR}/core)
 file(GLOB SOURCES
     ${PROJECT_SOURCE_DIR}/core/*.h
     ${PROJECT_SOURCE_DIR}/core/*.cpp
+    ${PROJECT_SOURCE_DIR}/core/*.c
 )
 add_library(Core ${SOURCES})
 target_link_libraries(Core ${LIBS})
@@ -21,7 +22,6 @@ target_link_libraries(Core ${LIBS})
 file(GLOB SOURCES
     ${PROJECT_SOURCE_DIR}/sandbox/test/*.h
     ${PROJECT_SOURCE_DIR}/sandbox/test/*.cpp
-    ${PROJECT_SOURCE_DIR}/sandbox/test/*.c
 )
 add_executable(Test ${SOURCES})
 target_link_libraries(Test Core)
