@@ -23,7 +23,7 @@ struct Vec3
 
 	inline T magnitude() const
 	{
-		return std::sqrt(x * x + y * y + z * z);
+		return std::sqrt(sqrMagnitude());
 	}
 
 	inline T sqrMagnitude() const
@@ -31,16 +31,18 @@ struct Vec3
 		return x * x + y * y + z * z;
 	}
 
-	inline Vec3 normalize() const
+	inline void normalize() const
 	{
 		T len = magnitude();
 		if (len == 0)
 		{
-			return *this;
+			return;
 		}
 
 		T invLen = 1 / len;
-		return Vec3(x * invLen, y * invLen, z * invLen);
+		x *= invLen;
+		y *= invLen;
+		z *= invLen;
 	}
 
 	inline T dot(const Vec3& other) const
@@ -58,12 +60,12 @@ struct Vec3
 		T a = (x - other.x);
 		T b = (y - other.y);
 		T c = (z - other.z);
-		return sqrt(a * a + b * b + c * c);
+		return std::sqrt(a * a + b * b + c * c);
 	}
 
 	inline static T dot(const Vec3& left, const Vec3& right)
 	{
-		return left.x * right.x + left.y * right.y + left.z * right.z;
+		return left.dot(right);
 	}
 
 	inline static Vec3 cross(const Vec3& left, const Vec3& right)
@@ -73,16 +75,16 @@ struct Vec3
 			left.x * right.y - left.y * right.x);
 	}
 
-	inline static void normalize(Vec3& v)
+	inline static Vec3 normalize(const Vec3& v)
 	{
 		T len = v.magnitude();
 		if (len == 0)
 		{
-			return;
+			return v;
 		}
 
 		T invLen = 1 / len;
-		v = v * invLen;
+		return v * invLen;
 	}
 
 	friend std::ostream& operator << (std::ostream& s, const Vec3<T>& v)
