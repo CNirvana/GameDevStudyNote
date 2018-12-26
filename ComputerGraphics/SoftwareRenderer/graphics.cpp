@@ -25,11 +25,11 @@ void Graphics::drawLine(Vec2i p0, Vec2i p1, FrameBuffer& frameBuffer, const TGAC
 	{
 		if (steep)
 		{
-			frameBuffer.drawPixel(y, x, color);
+			// frameBuffer.drawPixel(y, x, color);
 		}
 		else
 		{
-			frameBuffer.drawPixel(x, y, color);
+			// frameBuffer.drawPixel(x, y, color);
 		}
 
 		error += derror;
@@ -74,7 +74,7 @@ void Graphics::drawTriangle(Vec2i p0, Vec2i p1, Vec2i p2, FrameBuffer& frameBuff
 		}
 		for (int j = A; j <= B; j++)
 		{
-			frameBuffer.drawPixel(j, p0.y + i, color);
+			// frameBuffer.drawPixel(j, p0.y + i, color);
 		}
 	}
 }
@@ -115,8 +115,8 @@ void Graphics::rasterize(Vec3f p0, Vec3f p1, Vec3f p2, FrameBuffer& frameBuffer,
 
 			if (frameBuffer.getDepth(p.x, p.y) < p.z)
 			{
-				frameBuffer.setDepth(p.x, p.y, p.z);
-				frameBuffer.drawPixel(p.x, p.y, color);
+				// frameBuffer.setDepth(p.x, p.y, p.z);
+				// frameBuffer.drawPixel(p.x, p.y, color);
 			}
 		}
 	}

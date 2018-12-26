@@ -39,7 +39,7 @@ struct Vec3
 			return;
 		}
 
-		T invLen = 1 / len;
+		T invLen = (float)1 / len;
 		x *= invLen;
 		y *= invLen;
 		z *= invLen;
@@ -83,7 +83,7 @@ struct Vec3
 			return v;
 		}
 
-		T invLen = 1 / len;
+		T invLen = (float)1 / len;
 		return v * invLen;
 	}
 

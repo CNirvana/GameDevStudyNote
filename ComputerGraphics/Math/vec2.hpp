@@ -38,7 +38,7 @@ struct Vec2
 			return;
 		}
 
-		T invLen = 1 / len;
+		T invLen = (float)1 / len;
 		x *= invLen;
 		y *= invLen;;
 	}
@@ -78,7 +78,7 @@ struct Vec2
 			return v;
 		}
 
-		T invLen = 1 / len;
+		T invLen = (float)1 / len;
 		return v * invLen;
 	}
 
