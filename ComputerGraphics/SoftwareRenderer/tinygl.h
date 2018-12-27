@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <algorithm>
 #include "vertex.h"
 #include "framebuffer.h"
 #include "ishader.h"
@@ -16,7 +17,7 @@ enum ClearFlags
 class TinyGL
 {
 public:
-	TinyGL() : m_FrameBuffer(nullptr), m_Shader(nullptr) {}
+	TinyGL() : m_FrameBuffer(nullptr), m_Shader(nullptr), m_ClearColor(Color::clear) {}
 	~TinyGL()
 	{
 		if (m_FrameBuffer != nullptr) delete m_FrameBuffer;
@@ -29,19 +30,25 @@ public:
 		RenderStates::get().setProjectionMatrix(projectionMatrix);
 	}
 
-	void drawElements(const std::vector<Vertex> vertices, const std::vector<int> indices, const Mat4x4& transform);
+	void drawElements(const std::vector<Vertex>& vertices, const std::vector<int>& indices, const Mat4x4& transform);
 	void drawTriangle(const Vertex& v1, const Vertex& v2, const Vertex& v3);
+	void drawLine(Vec2i p0, Vec2i p1, const Color& color);
 	void clear(int flags);
 
 	void bindShader(IShader* shader) { m_Shader = shader; }
 
 	const FrameBuffer* getFrameBuffer() const { return m_FrameBuffer; }
 
+	const Color& getClearColor() const { return m_ClearColor; }
+	void setClearColor(const Color& color) { m_ClearColor = color; }
+
 private:
 	void rasterization(const VertOut& v1, const VertOut& v2, const VertOut& v3);
+	void wireframe(const VertOut& v1, const VertOut& v2, const VertOut& v3);
 	inline float edgeFunction(float Ax, float Ay, float Bx, float By, float Cx, float Cy); // CCW
 	bool inTriangle(float Ax, float Ay, float Bx, float By, float Cx, float Cy, float Px, float Py);
 
 	IShader* m_Shader;
 	FrameBuffer* m_FrameBuffer;
+	Color m_ClearColor;
 };

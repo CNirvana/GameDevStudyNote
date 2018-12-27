@@ -11,7 +11,7 @@ struct VertIn
 	Vec3f normal;
 	Color color;
 
-	VertIn(const Vertex& vertex) : position(vertex.normal), texCoord(vertex.uv), normal(vertex.normal), color(vertex.color)
+	VertIn(const Vertex& vertex) : position(vertex.position), texCoord(vertex.uv), normal(vertex.normal), color(vertex.color)
 	{}
 };
 

@@ -2,6 +2,12 @@
 
 #include "mat4.hpp"
 
+enum RenderMode
+{
+	Wireframe,
+	Rasterization
+};
+
 class RenderStates
 {
 public:
@@ -37,10 +43,14 @@ public:
 	const Mat4x4& getViewProjectionMatrix() const { return m_ViewProjectionMatrix; }
 	const Mat4x4& getWorldViewProjectionMatrix() const { return m_ModelViewProjectionMatrix; }
 
+	RenderMode getRenderMode() const { return m_RenderMode; }
+	void setRenderMode(RenderMode renderMode) { m_RenderMode = renderMode; }
+
 private:
 	Mat4x4 m_ProjectionMatrix;
 	Mat4x4 m_ViewMatrix;
 	Mat4x4 m_ModelMatrix;
 	Mat4x4 m_ViewProjectionMatrix;
 	Mat4x4 m_ModelViewProjectionMatrix;
+	RenderMode m_RenderMode = RenderMode::Rasterization;
 };

@@ -129,8 +129,33 @@ struct Mat4x4
 		}
 	}
 
-	/*static Mat4x4 translate(const Vec3& translation);
-	static Mat4x4 scale(const Vec3& scale);
+	static Mat4x4 translate(const Vec3f& translation)
+	{
+		Mat4x4 mat(1.0f);
+		mat[0][3] = translation.x;
+		mat[1][3] = translation.y;
+		mat[2][3] = translation.z;
+		return mat;
+	}
+
+	static Mat4x4 scale(float s)
+	{
+		Mat4x4 mat(s);
+		mat[3][3] = 1;
+		return mat;
+	}
+
+	static Mat4x4 scale(const Vec3f& s)
+	{
+		Mat4x4 mat;
+		mat[0][0] = s.x;
+		mat[1][1] = s.y;
+		mat[2][2] = s.z;
+		mat[3][3] = 1.0f;
+		return mat;
+	}
+
+	/*
 	static Mat4x4 rotate(float angle, const Vec3& axis);
 	static Mat4x4 rotateX(float angle);
 	static Mat4x4 rotateY(float angle);

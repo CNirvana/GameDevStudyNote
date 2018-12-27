@@ -9,7 +9,7 @@ void TinyGL::initialize(int width, int height)
 	m_Shader = new DefaultShader();
 }
 
-void TinyGL::drawElements(const std::vector<Vertex> vertices, const std::vector<int> indices, const Mat4x4& transform)
+void TinyGL::drawElements(const std::vector<Vertex>& vertices, const std::vector<int>& indices, const Mat4x4& transform)
 {
 	RenderStates::get().setModelMatrix(transform);
 
@@ -33,26 +33,91 @@ void TinyGL::drawTriangle(const Vertex& v1, const Vertex& v2, const Vertex& v3)
 	VertOut vertOut3;
 	m_Shader->vert(&vertIn3, &vertOut3);
 
-	rasterization(vertOut1, vertOut2, vertOut3);
+	vertOut1.position /= vertOut1.position.w;
+	vertOut2.position /= vertOut2.position.w;
+	vertOut3.position /= vertOut3.position.w;
+
+	int width = m_FrameBuffer->getWidth();
+	int height = m_FrameBuffer->getHeight();
+	vertOut1.position.x = (vertOut1.position.x + 1) * 0.5 * width;
+	vertOut1.position.y = (1 - vertOut1.position.y) * 0.5 * height;
+	vertOut2.position.x = (vertOut2.position.x + 1) * 0.5 * width;
+	vertOut2.position.y = (1 - vertOut2.position.y) * 0.5 * height;
+	vertOut3.position.x = (vertOut3.position.x + 1) * 0.5 * width;
+	vertOut3.position.y = (1 - vertOut3.position.y) * 0.5 * height;
+
+	switch (RenderStates::get().getRenderMode())
+	{
+		case RenderMode::Rasterization:
+		{
+			rasterization(vertOut1, vertOut2, vertOut3);
+		}
+		break;
+		case RenderMode::Wireframe:
+		{
+			Vec2i p1 = Vec2i(vertOut1.position.x, vertOut1.position.y);
+			Vec2i p2 = Vec2i(vertOut2.position.x, vertOut2.position.y);
+			Vec2i p3 = Vec2i(vertOut3.position.x, vertOut3.position.y);
+
+			drawLine(p1, p2, Color::white);
+			drawLine(p2, p3, Color::white);
+			drawLine(p3, p1, Color::white);
+		}
+		break;
+		default:
+			break;
+	}
+}
+
+void TinyGL::drawLine(Vec2i p0, Vec2i p1, const Color& color)
+{
+	bool steep = false;
+	if (std::abs(p0.x - p1.x) < std::abs(p0.y - p1.y))
+	{
+		std::swap(p0.x, p0.y);
+		std::swap(p1.x, p1.y);
+		steep = true;
+	}
+
+	if (p0.x > p1.x)
+	{
+		std::swap(p0, p1);
+	}
+
+	int dx = p1.x - p0.x;
+	int dy = p1.y - p0.y;
+	float derror = std::abs(dy) * 2;
+	float error = 0;
+	int y = p0.y;
+
+	for (int x = p0.x; x <= p1.x; x++)
+	{
+		if (steep)
+		{
+			m_FrameBuffer->setPixel(y, x, color);
+		}
+		else
+		{
+			m_FrameBuffer->setPixel(x, y, color);
+		}
+
+		error += derror;
+		if (error > dx)
+		{
+			y += (p1.y > p0.y ? 1 : -1);
+			error -= dx * 2;
+		}
+	}
 }
 
 void TinyGL::rasterization(const VertOut& v1, const VertOut& v2, const VertOut& v3)
 {
 	Vec4f p1 = v1.position;
-	p1 /= p1.w;
 	Vec4f p2 = v2.position;
-	p2 /= p2.w;
 	Vec4f p3 = v3.position;
-	p3 /= p3.w;
 
 	int width = m_FrameBuffer->getWidth();
 	int height = m_FrameBuffer->getHeight();
-	p1.x = (p1.x + 1) * 0.5 * width;
-	p1.y = (1 - p1.y) * 0.5 * height;
-	p2.x = (p2.x + 1) * 0.5 * width;
-	p2.y = (1 - p2.y) * 0.5 * height;
-	p3.x = (p3.x + 1) * 0.5 * width;
-	p3.y = (1 - p3.y) * 0.5 * height;
 
 	float area = edgeFunction(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y);
 	float invArea = 1.0f / area;
@@ -83,11 +148,16 @@ void TinyGL::rasterization(const VertOut& v1, const VertOut& v2, const VertOut& 
 	}
 }
 
+void TinyGL::wireframe(const VertOut& v1, const VertOut& v2, const VertOut& v3)
+{
+
+}
+
 void TinyGL::clear(int flags)
 {
 	if (flags & ClearFlags::ColorBuffer)
 	{
-		m_FrameBuffer->clearColorBuffer({ 0, 0, 0, 0 });
+		m_FrameBuffer->clearColorBuffer(m_ClearColor);
 	}
 	if (flags & ClearFlags::DepthBuffer)
 	{
