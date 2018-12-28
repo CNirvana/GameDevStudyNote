@@ -31,7 +31,7 @@ public:
 	}
 
 	void drawElements(const std::vector<Vertex>& vertices, const std::vector<int>& indices, const Mat4x4& transform);
-	void drawTriangle(const Vertex& v1, const Vertex& v2, const Vertex& v3);
+	void drawTriangle(const Vertex& v0, const Vertex& v1, const Vertex& v2);
 	void drawLine(Vec2i p0, Vec2i p1, const Color& color);
 	void clear(int flags);
 
@@ -43,10 +43,11 @@ public:
 	void setClearColor(const Color& color) { m_ClearColor = color; }
 
 private:
-	void rasterization(const VertOut& v1, const VertOut& v2, const VertOut& v3);
-	void wireframe(const VertOut& v1, const VertOut& v2, const VertOut& v3);
+	void rasterization(const VertOut& v0, const VertOut& v1, const VertOut& v2);
+	void wireframe(const VertOut& v0, const VertOut& v1, const VertOut& v2);
 	inline float edgeFunction(float Ax, float Ay, float Bx, float By, float Cx, float Cy); // CCW
 	bool inTriangle(float Ax, float Ay, float Bx, float By, float Cx, float Cy, float Px, float Py);
+	inline float computeDepth(float invZ0, float w0, float invZ1, float w1, float invZ2, float w2);
 
 	IShader* m_Shader;
 	FrameBuffer* m_FrameBuffer;

@@ -40,9 +40,11 @@ int main()
 	tinyGL.drawElements(cube.vertices, cube.indices, Mat4x4::scale(5.0f));
 
 	auto colorBuffer = tinyGL.getFrameBuffer()->getColorBuffer();
+	auto depthBuffer = tinyGL.getFrameBuffer()->getDepthBuffer();
 	auto width = tinyGL.getFrameBuffer()->getWidth();
 	auto height = tinyGL.getFrameBuffer()->getHeight();
 
+	// write color buffer
 	TGAImage image(width, height, TGAImage::RGBA);
 	for (int j = 0; j < height; j++)
 	{
@@ -52,8 +54,18 @@ int main()
 			image.set(i, j, TGAColor(color.r * 255, color.g * 255, color.b * 255, color.a * 255));
 		}
 	}
+	image.write_tga_file("color_buffer.tga");
 
-	image.write_tga_file("test.tga");
+	// write depth buffer
+	for (int j = 0; j < height; j++)
+	{
+		for (int i = 0; i < width; i++)
+		{
+			auto depth = depthBuffer[i + j * width];
+			image.set(i, j, TGAColor(depth * 255, depth * 255, depth * 255, 255));
+		}
+	}
+	image.write_tga_file("depth_buffer.tga");
 
 	return 0;
 }

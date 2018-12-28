@@ -19,8 +19,12 @@ void TinyGL::drawElements(const std::vector<Vertex>& vertices, const std::vector
 	}
 }
 
-void TinyGL::drawTriangle(const Vertex& v1, const Vertex& v2, const Vertex& v3)
+void TinyGL::drawTriangle(const Vertex& v0, const Vertex& v1, const Vertex& v2)
 {
+	VertIn vertIn0(v0);
+	VertOut vertOut0;
+	m_Shader->vert(&vertIn0, &vertOut0);
+
 	VertIn vertIn1(v1);
 	VertOut vertOut1;
 	m_Shader->vert(&vertIn1, &vertOut1);
@@ -29,39 +33,29 @@ void TinyGL::drawTriangle(const Vertex& v1, const Vertex& v2, const Vertex& v3)
 	VertOut vertOut2;
 	m_Shader->vert(&vertIn2, &vertOut2);
 
-	VertIn vertIn3(v3);
-	VertOut vertOut3;
-	m_Shader->vert(&vertIn3, &vertOut3);
-
+	vertOut0.position /= vertOut0.position.w;
 	vertOut1.position /= vertOut1.position.w;
 	vertOut2.position /= vertOut2.position.w;
-	vertOut3.position /= vertOut3.position.w;
 
 	int width = m_FrameBuffer->getWidth();
 	int height = m_FrameBuffer->getHeight();
+	vertOut0.position.x = (vertOut0.position.x + 1) * 0.5 * width;
+	vertOut0.position.y = (1 - vertOut0.position.y) * 0.5 * height;
 	vertOut1.position.x = (vertOut1.position.x + 1) * 0.5 * width;
 	vertOut1.position.y = (1 - vertOut1.position.y) * 0.5 * height;
 	vertOut2.position.x = (vertOut2.position.x + 1) * 0.5 * width;
 	vertOut2.position.y = (1 - vertOut2.position.y) * 0.5 * height;
-	vertOut3.position.x = (vertOut3.position.x + 1) * 0.5 * width;
-	vertOut3.position.y = (1 - vertOut3.position.y) * 0.5 * height;
 
 	switch (RenderStates::get().getRenderMode())
 	{
 		case RenderMode::Rasterization:
 		{
-			rasterization(vertOut1, vertOut2, vertOut3);
+			rasterization(vertOut0, vertOut1, vertOut2);
 		}
 		break;
 		case RenderMode::Wireframe:
 		{
-			Vec2i p1 = Vec2i(vertOut1.position.x, vertOut1.position.y);
-			Vec2i p2 = Vec2i(vertOut2.position.x, vertOut2.position.y);
-			Vec2i p3 = Vec2i(vertOut3.position.x, vertOut3.position.y);
-
-			drawLine(p1, p2, Color::white);
-			drawLine(p2, p3, Color::white);
-			drawLine(p3, p1, Color::white);
+			wireframe(vertOut0, vertOut1, vertOut2);
 		}
 		break;
 		default:
@@ -110,25 +104,28 @@ void TinyGL::drawLine(Vec2i p0, Vec2i p1, const Color& color)
 	}
 }
 
-void TinyGL::rasterization(const VertOut& v1, const VertOut& v2, const VertOut& v3)
+void TinyGL::rasterization(const VertOut& v0, const VertOut& v1, const VertOut& v2)
 {
+	Vec4f p0 = v0.position;
 	Vec4f p1 = v1.position;
 	Vec4f p2 = v2.position;
-	Vec4f p3 = v3.position;
+	float invZ0 = 1 / p0.z;
+	float invZ1 = 1 / p1.z;
+	float invZ2 = 1 / p2.z;
 
 	int width = m_FrameBuffer->getWidth();
 	int height = m_FrameBuffer->getHeight();
 
-	float area = edgeFunction(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y);
+	float area = edgeFunction(p0.x, p0.y, p1.x, p1.y, p2.x, p2.y);
 	float invArea = 1.0f / area;
 	for (int j = 0; j < height; j++)
 	{
 		for (int i = 0; i < width; i++)
 		{
 			Vec3f p(i + 0.5f, j + 0.5f, 0);
-			float w0 = edgeFunction(p2.x, p2.y, p3.x, p3.y, p.x, p.y);
-			float w1 = edgeFunction(p3.x, p3.y, p1.x, p1.y, p.x, p.y);
-			float w2 = edgeFunction(p1.x, p1.y, p2.x, p2.y, p.x, p.y);
+			float w0 = edgeFunction(p1.x, p1.y, p2.x, p2.y, p.x, p.y);
+			float w1 = edgeFunction(p2.x, p2.y, p0.x, p0.y, p.x, p.y);
+			float w2 = edgeFunction(p0.x, p0.y, p1.x, p1.y, p.x, p.y);
 
 			if (w0 >= 0 && w1 >= 0 && w2 >= 0)
 			{
@@ -136,21 +133,36 @@ void TinyGL::rasterization(const VertOut& v1, const VertOut& v2, const VertOut& 
 				w1 *= invArea;
 				w2 *= invArea;
 
-				VertOut fragIN;
-				fragIN.color.r = w0 * v1.color.r + w1 * v2.color.r + w2 * v3.color.r;
-				fragIN.color.g = w0 * v1.color.g + w1 * v2.color.g + w2 * v3.color.g;
-				fragIN.color.b = w0 * v1.color.b + w1 * v2.color.b + w2 * v3.color.b;
+				float z = computeDepth(invZ0, w0, invZ1, w1, invZ2, w2);
+				if (z < m_FrameBuffer->getDepth(i, j))
+				{
+					m_FrameBuffer->setDepth(i, j, z);
 
-				Color color = m_Shader->frag(&fragIN);
-				m_FrameBuffer->setPixel(i, j, color);
+					VertOut fragIN;
+					fragIN.color.r = (w0 * v0.color.r * invZ0 + w1 * v1.color.r * invZ1 + w2 * v2.color.r * invZ2) * z;
+					fragIN.color.g = (w0 * v0.color.g * invZ0 + w1 * v1.color.g * invZ1 + w2 * v2.color.g * invZ2) * z;
+					fragIN.color.b = (w0 * v0.color.b * invZ0 + w1 * v1.color.b * invZ1 + w2 * v2.color.b * invZ2) * z;
+
+					fragIN.texCoord.x = (w0 * v0.texCoord.x * invZ0 + w1 * v1.texCoord.x * invZ1 + w2 * v2.texCoord.x * invZ2) * z;
+					fragIN.texCoord.y = (w0 * v0.texCoord.y * invZ0 + w1 * v1.texCoord.y * invZ1 + w2 * v2.texCoord.y * invZ2) * z;
+
+					Color color = m_Shader->frag(&fragIN);
+					m_FrameBuffer->setPixel(i, j, color);
+				}
 			}
 		}
 	}
 }
 
-void TinyGL::wireframe(const VertOut& v1, const VertOut& v2, const VertOut& v3)
+void TinyGL::wireframe(const VertOut& v0, const VertOut& v1, const VertOut& v2)
 {
+	Vec2i p0 = Vec2i(v0.position.x, v0.position.y);
+	Vec2i p1 = Vec2i(v1.position.x, v1.position.y);
+	Vec2i p2 = Vec2i(v2.position.x, v2.position.y);
 
+	drawLine(p0, p1, Color::white);
+	drawLine(p1, p2, Color::white);
+	drawLine(p2, p0, Color::white);
 }
 
 void TinyGL::clear(int flags)
@@ -167,16 +179,22 @@ void TinyGL::clear(int flags)
 
 float TinyGL::edgeFunction(float Ax, float Ay, float Bx, float By, float Px, float Py)
 {
-    // return (Px - Ax) * (By - Ay) - (Py - Ay) * (Bx -Ax); // CW to right
-    return (Ax - Bx) * (Py - Ay) - (Ay - By) * (Px - Ax); // CCW to left
+	// return (Px - Ax) * (By - Ay) - (Py - Ay) * (Bx -Ax); // CW to right
+	return (Ax - Bx) * (Py - Ay) - (Ay - By) * (Px - Ax); // CCW to left
 }
 
 bool TinyGL::inTriangle(float Ax, float Ay, float Bx, float By, float Cx, float Cy, float Px, float Py)
 {
-    bool inside = true;
-    inside &= (edgeFunction(Ax, Ay, Bx, By, Px, Py) >= 0);
-    inside &= (edgeFunction(Bx, By, Cx, Cy, Px, Py) >= 0);
-    inside &= (edgeFunction(Cx, Cy, Ax, Ay, Px, Py) >= 0);
+	bool inside = true;
+	inside &= (edgeFunction(Ax, Ay, Bx, By, Px, Py) >= 0);
+	inside &= (edgeFunction(Bx, By, Cx, Cy, Px, Py) >= 0);
+	inside &= (edgeFunction(Cx, Cy, Ax, Ay, Px, Py) >= 0);
 
-    return inside;
+	return inside;
+}
+
+float TinyGL::computeDepth(float invZ0, float w0, float invZ1, float w1, float invZ2, float w2)
+{
+	float invZ = invZ0 * w0 + invZ1 * w1 + invZ2 * w2;
+	return 1 / invZ;
 }
