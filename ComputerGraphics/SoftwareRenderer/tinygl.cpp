@@ -219,6 +219,44 @@ bool TinyGL::inTriangle(float Ax, float Ay, float Bx, float By, float Cx, float 
 	return inside;
 }
 
+void TinyGL::scanline(Vec2i p0, Vec2i p1, Vec2i p2, const Color& color)
+{
+	if (p0.y > p1.y)
+	{
+		std::swap(p0, p1);
+	}
+	if (p1.y > p2.y)
+	{
+		std::swap(p1, p2);
+	}
+	if (p0.y > p1.y)
+	{
+		std::swap(p0, p1);
+	}
+
+	int totalHeight = p2.y - p0.y;
+	Vec2i p2mp0 = p2 - p0;
+	Vec2i p2mp1 = p2 - p1;
+	Vec2i p1mp0 = p1 - p0;
+	for (int i = 0; i < totalHeight; i++)
+	{
+		bool secondHalf = i > p1.y - p0.y || p1.y == p0.y;
+		int segmentHeight = secondHalf ? p2.y - p1.y : p1.y - p0.y;
+		float alpha = (float)i / totalHeight;
+		float beta = (float)(i - (secondHalf ? p1.y - p0.y : 0)) / segmentHeight;
+		int A = p0.x + p2mp0.x * alpha;
+		int B = secondHalf ? p1.x + p2mp1.x * beta : p0.x + p1mp0.x * beta;
+		if (A > B)
+		{
+			std::swap(A, B);
+		}
+		for (int j = A; j <= B; j++)
+		{
+			m_FrameBuffer->setPixel(j, p0.y + i, color);
+		}
+	}
+}
+
 float TinyGL::computeDepth(float invZ0, float w0, float invZ1, float w1, float invZ2, float w2)
 {
 	float invZ = invZ0 * w0 + invZ1 * w1 + invZ2 * w2;

@@ -47,6 +47,7 @@ private:
 	void wireframe(const VertOut& v0, const VertOut& v1, const VertOut& v2);
 	inline float edgeFunction(float Ax, float Ay, float Bx, float By, float Cx, float Cy); // CCW
 	bool inTriangle(float Ax, float Ay, float Bx, float By, float Cx, float Cy, float Px, float Py);
+	void scanline(Vec2i p0, Vec2i p1, Vec2i p2, const Color& color);
 	inline float computeDepth(float invZ0, float w0, float invZ1, float w1, float invZ2, float w2);
 	inline bool clipping(const Vec4f& v);
 
