@@ -48,6 +48,7 @@ private:
 	inline float edgeFunction(float Ax, float Ay, float Bx, float By, float Cx, float Cy); // CCW
 	bool inTriangle(float Ax, float Ay, float Bx, float By, float Cx, float Cy, float Px, float Py);
 	inline float computeDepth(float invZ0, float w0, float invZ1, float w1, float invZ2, float w2);
+	inline bool clipping(const Vec4f& v);
 
 	IShader* m_Shader;
 	FrameBuffer* m_FrameBuffer;

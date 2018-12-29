@@ -62,6 +62,8 @@ int main()
 		for (int i = 0; i < width; i++)
 		{
 			auto depth = depthBuffer[i + j * width];
+			// get linear depth
+			depth = 1.0f / ((1.0f - 100.0f) * depth + 100.0f);
 			image.set(i, j, TGAColor(depth * 255, depth * 255, depth * 255, 255));
 		}
 	}

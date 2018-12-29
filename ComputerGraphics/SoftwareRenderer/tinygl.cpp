@@ -33,6 +33,12 @@ void TinyGL::drawTriangle(const Vertex& v0, const Vertex& v1, const Vertex& v2)
 	VertOut vertOut2;
 	m_Shader->vert(&vertIn2, &vertOut2);
 
+	// simple clipping
+	if (clipping(vertOut0.position) || clipping(vertOut1.position) || clipping(vertOut2.position))
+	{
+
+	}
+
 	vertOut0.position /= vertOut0.position.w;
 	vertOut1.position /= vertOut1.position.w;
 	vertOut2.position /= vertOut2.position.w;
@@ -116,11 +122,31 @@ void TinyGL::rasterization(const VertOut& v0, const VertOut& v1, const VertOut& 
 	int width = m_FrameBuffer->getWidth();
 	int height = m_FrameBuffer->getHeight();
 
+	float xMin = std::numeric_limits<float>::max();
+	float yMin = std::numeric_limits<float>::max();
+	float xMax = -std::numeric_limits<float>::max();
+	float yMax = -std::numeric_limits<float>::max();
+
+	xMin = std::max(0.0f, std::min(xMin, p0.x));
+	yMin = std::max(0.0f, std::min(yMin, p0.y));
+	xMax = std::min(width - 1.0f, std::max(xMax, p0.x));
+	yMax = std::min(height - 1.0f, std::max(yMax, p0.y));
+
+	xMin = std::max(0.0f, std::min(xMin, p1.x));
+	yMin = std::max(0.0f, std::min(yMin, p1.y));
+	xMax = std::min(width - 1.0f, std::max(xMax, p1.x));
+	yMax = std::min(height - 1.0f, std::max(yMax, p1.y));
+
+	xMin = std::max(0.0f, std::min(xMin, p2.x));
+	yMin = std::max(0.0f, std::min(yMin, p2.y));
+	xMax = std::min(width - 1.0f, std::max(xMax, p2.x));
+	yMax = std::min(height - 1.0f, std::max(yMax, p2.y));
+
 	float area = edgeFunction(p0.x, p0.y, p1.x, p1.y, p2.x, p2.y);
 	float invArea = 1.0f / area;
-	for (int j = 0; j < height; j++)
+	for (int j = yMin; j < yMax; j++)
 	{
-		for (int i = 0; i < width; i++)
+		for (int i = xMin; i < xMax; i++)
 		{
 			Vec3f p(i + 0.5f, j + 0.5f, 0);
 			float w0 = edgeFunction(p1.x, p1.y, p2.x, p2.y, p.x, p.y);
@@ -197,4 +223,12 @@ float TinyGL::computeDepth(float invZ0, float w0, float invZ1, float w1, float i
 {
 	float invZ = invZ0 * w0 + invZ1 * w1 + invZ2 * w2;
 	return 1 / invZ;
+}
+
+bool TinyGL::clipping(const Vec4f& v)
+{
+	return (v.x < -v.w || v.x > v.w)
+		|| (v.y < -v.w || v.y > v.w)
+		|| (v.z < -v.w || v.z > v.w)
+		|| (v.w <= 0);
 }
