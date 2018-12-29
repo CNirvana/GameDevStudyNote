@@ -36,7 +36,7 @@ void TinyGL::drawTriangle(const Vertex& v0, const Vertex& v1, const Vertex& v2)
 	// simple clipping
 	if (clipping(vertOut0.position) || clipping(vertOut1.position) || clipping(vertOut2.position))
 	{
-
+		return;
 	}
 
 	vertOut0.position /= vertOut0.position.w;
