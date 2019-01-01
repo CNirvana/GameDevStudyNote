@@ -8,8 +8,44 @@
 constexpr auto WIDTH = 1024;
 constexpr auto HEIGHT = 768;
 
+Texture* loadTexture(const std::string& path)
+{
+	TGAImage img;
+	img.read_tga_file(path.c_str());
+	int width = img.get_width();
+	int height = img.get_height();
+
+	Color* pixels = new Color[width * height];
+	for (int j = 0; j < height; j++)
+	{
+		for (int i = 0; i < width; i++)
+		{
+			TGAColor c = img.get(i, j);
+			pixels[i + j * width] = Color(c.bgra[2] / 255.0f, c.bgra[1] / 255.0f, c.bgra[0] / 255.0f, 1);
+		}
+	}
+
+	return new Texture(pixels, width, height);
+}
+
+void saveImage(const Color* pixels, int width, int height, std::string fileName)
+{
+	TGAImage image(width, height, TGAImage::RGBA);
+	for (int j = 0; j < height; j++)
+	{
+		for (int i = 0; i < width; i++)
+		{
+			auto color = pixels[i + j * width];
+			image.set(i, j, TGAColor(color.r * 255, color.g * 255, color.b * 255, color.a * 255));
+		}
+	}
+	image.write_tga_file(fileName.c_str());
+}
+
 int main()
 {
+	Texture* texture1 = loadTexture("test.tga");
+
 	TinyGL tinyGL;
 	tinyGL.initialize(WIDTH, HEIGHT);
 
@@ -20,54 +56,30 @@ int main()
 	tinyGL.setClearColor(Color::black);
 	tinyGL.clear(ClearFlags::ColorBuffer | ClearFlags::DepthBuffer);
 
-	Mesh cube;
-	cube.vertices = {
-		{{-1, -1, 1}, {}, {}, {1, 0, 0, 1}},
-		{{1, -1, 1}, {}, {}, {0, 1, 0, 1}},
-		{{1, 1, 1}, {}, {}, {0, 0, 1, 1}},
-		{{-1, 1, 1}, {}, {}, {1, 1, 0, 1}},
-		{{-1, -1, -1}, {}, {}, {1, 0, 1, 1}},
-		{{1, -1, -1}, {}, {}, {0, 1, 1, 1}},
-		{{1, 1, -1}, {}, {}, {1, 1, 1, 1}},
-		{{-1, 1, -1}, {}, {}, {0, 0, 0, 1}}
+	Mesh quad;
+	quad.vertices = {
+		{{-1, -1, 0}, {0, 0}, {0, 0, 1}, {0, 0, 0, 1}},
+		{{1, -1, 0}, {1, 0}, {0, 0, 1}, {1, 1, 1, 1}},
+		{{-1, 1, 0}, {0, 1}, {0, 0, 1}, {0, 0, 0, 1}},
+		{{1, 1, 0}, {1, 1}, {0, 0, 1}, {1, 1, 1, 1}}
 	};
-	cube.indices = { 0, 1, 2, 0, 2, 3, 1, 5, 6, 1, 6, 2, 5, 4, 7, 5, 7, 5, 4, 0, 3, 4, 3, 7, 0, 4, 5, 0, 5, 1, 3, 2, 6, 3, 6, 7 };
+	quad.indices = { 0, 1, 2, 1, 3, 2 };
 
 	Mesh triangle;
 	triangle.vertices = { {{-1, -1, 0}, {}, {}, {1, 0, 0, 1}}, {{1, -1, 0}, {}, {}, {0, 1, 0, 1}}, {{0, 1, 0}, {}, {}, {0, 0, 1, 1} } };
 	triangle.indices = { 0, 1, 2 };
 
-	tinyGL.drawElements(cube.vertices, cube.indices, Mat4x4::scale(5.0f));
+	tinyGL.bindTexture(texture1, 0);
+	tinyGL.drawElements(quad.vertices, quad.indices, Mat4x4::scale(5.0f));
 
 	auto colorBuffer = tinyGL.getFrameBuffer()->getColorBuffer();
 	auto depthBuffer = tinyGL.getFrameBuffer()->getDepthBuffer();
 	auto width = tinyGL.getFrameBuffer()->getWidth();
 	auto height = tinyGL.getFrameBuffer()->getHeight();
 
-	// write color buffer
-	TGAImage image(width, height, TGAImage::RGBA);
-	for (int j = 0; j < height; j++)
-	{
-		for (int i = 0; i < width; i++)
-		{
-			auto color = colorBuffer[i + j * width];
-			image.set(i, j, TGAColor(color.r * 255, color.g * 255, color.b * 255, color.a * 255));
-		}
-	}
-	image.write_tga_file("color_buffer.tga");
+	saveImage(colorBuffer->getPixels(), width, height, "color_buffer.tga");
 
-	// write depth buffer
-	for (int j = 0; j < height; j++)
-	{
-		for (int i = 0; i < width; i++)
-		{
-			auto depth = depthBuffer[i + j * width];
-			// get linear depth
-			depth = 1.0f / ((1.0f - 100.0f) * depth + 100.0f);
-			image.set(i, j, TGAColor(depth * 255, depth * 255, depth * 255, 255));
-		}
-	}
-	image.write_tga_file("depth_buffer.tga");
+	delete texture1;
 
 	return 0;
 }

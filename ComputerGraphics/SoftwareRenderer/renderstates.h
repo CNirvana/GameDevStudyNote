@@ -1,6 +1,7 @@
 #pragma once
 
 #include "mat4.hpp"
+#include "texture.h"
 
 enum RenderMode
 {
@@ -15,6 +16,11 @@ public:
 	{
 		static RenderStates renderStates;
 		return renderStates;
+	}
+
+	RenderStates()
+	{
+		m_TextureSlots = { nullptr, nullptr, nullptr, nullptr };
 	}
 
 	const Mat4x4& getProjectionMatrix() const { return m_ProjectionMatrix; }
@@ -41,10 +47,13 @@ public:
 	}
 
 	const Mat4x4& getViewProjectionMatrix() const { return m_ViewProjectionMatrix; }
-	const Mat4x4& getWorldViewProjectionMatrix() const { return m_ModelViewProjectionMatrix; }
+	const Mat4x4& getModelViewProjectionMatrix() const { return m_ModelViewProjectionMatrix; }
 
 	RenderMode getRenderMode() const { return m_RenderMode; }
 	void setRenderMode(RenderMode renderMode) { m_RenderMode = renderMode; }
+
+	const Texture* getTexture(int slot) const { return m_TextureSlots[slot]; }
+	void bindTexture(Texture* texture, int slot) { m_TextureSlots[slot] = texture; }
 
 private:
 	Mat4x4 m_ProjectionMatrix;
@@ -53,4 +62,6 @@ private:
 	Mat4x4 m_ViewProjectionMatrix;
 	Mat4x4 m_ModelViewProjectionMatrix;
 	RenderMode m_RenderMode = RenderMode::Rasterization;
+
+	std::vector<Texture*> m_TextureSlots;
 };

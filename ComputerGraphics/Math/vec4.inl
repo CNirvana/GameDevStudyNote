@@ -59,7 +59,7 @@ Vec4<T> operator - (const Vec4<T>& left, const Vec4<T>& right)
 template<typename T>
 Vec4<T> operator * (const Vec4<T>& left, T right)
 {
-	return Vec4<T>(left.x * right, left.y * right, left.z * right, left.w * right;);
+	return Vec4<T>(left.x * right, left.y * right, left.z * right, left.w * right);
 }
 
 template<typename T>

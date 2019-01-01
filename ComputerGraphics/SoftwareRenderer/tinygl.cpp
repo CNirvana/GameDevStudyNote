@@ -39,12 +39,15 @@ void TinyGL::drawTriangle(const Vertex& v0, const Vertex& v1, const Vertex& v2)
 		return;
 	}
 
+	vertOut0.invZ = 1 / vertOut0.position.w;
+	vertOut1.invZ = 1 / vertOut1.position.w;
+	vertOut2.invZ = 1 / vertOut2.position.w;
 	vertOut0.position /= vertOut0.position.w;
 	vertOut1.position /= vertOut1.position.w;
 	vertOut2.position /= vertOut2.position.w;
 
-	int width = m_FrameBuffer->getWidth();
-	int height = m_FrameBuffer->getHeight();
+	int width = m_FrameBuffer->getWidth() - 1;
+	int height = m_FrameBuffer->getHeight() - 1;
 	vertOut0.position.x = (vertOut0.position.x + 1) * 0.5 * width;
 	vertOut0.position.y = (1 - vertOut0.position.y) * 0.5 * height;
 	vertOut1.position.x = (vertOut1.position.x + 1) * 0.5 * width;
@@ -165,12 +168,7 @@ void TinyGL::rasterization(const VertOut& v0, const VertOut& v1, const VertOut& 
 					m_FrameBuffer->setDepth(i, j, z);
 
 					VertOut fragIN;
-					fragIN.color.r = (w0 * v0.color.r * invZ0 + w1 * v1.color.r * invZ1 + w2 * v2.color.r * invZ2) * z;
-					fragIN.color.g = (w0 * v0.color.g * invZ0 + w1 * v1.color.g * invZ1 + w2 * v2.color.g * invZ2) * z;
-					fragIN.color.b = (w0 * v0.color.b * invZ0 + w1 * v1.color.b * invZ1 + w2 * v2.color.b * invZ2) * z;
-
-					fragIN.texCoord.x = (w0 * v0.texCoord.x * invZ0 + w1 * v1.texCoord.x * invZ1 + w2 * v2.texCoord.x * invZ2) * z;
-					fragIN.texCoord.y = (w0 * v0.texCoord.y * invZ0 + w1 * v1.texCoord.y * invZ1 + w2 * v2.texCoord.y * invZ2) * z;
+					interpolate(v0, v1, v2, w0 * invZ0 * z, w1 * invZ1 * z, w2 * invZ2 * z, fragIN);
 
 					Color color = m_Shader->frag(&fragIN);
 					m_FrameBuffer->setPixel(i, j, color);
@@ -255,6 +253,15 @@ void TinyGL::scanline(Vec2i p0, Vec2i p1, Vec2i p2, const Color& color)
 			m_FrameBuffer->setPixel(j, p0.y + i, color);
 		}
 	}
+}
+
+void TinyGL::interpolate(const VertOut& v0, const VertOut& v1, const VertOut& v2, float w0, float w1, float w2, VertOut& out)
+{
+	out.position = v0.position * w0 + v1.position * w1 + v2.position * w2;
+	out.color = v0.color * w0 + v1.color * w1 + v2.color * w2;
+	out.texCoord = v0.texCoord * w0 + v1.texCoord * w1 + v2.texCoord * w2;
+	out.normal = v0.normal * w0 + v1.normal * w1 + v2.normal * w2;
+	out.worldPos = v0.worldPos * w0 + v1.worldPos * w1 + v2.worldPos * w2;
 }
 
 float TinyGL::computeDepth(float invZ0, float w0, float invZ1, float w1, float invZ2, float w2)

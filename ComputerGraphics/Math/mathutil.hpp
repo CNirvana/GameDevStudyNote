@@ -1,5 +1,7 @@
 #pragma once
 
+#include <algorithm>
+
 class MathUtil
 {
 public:
@@ -30,4 +32,9 @@ public:
     {
         return Vec3f(lerp(a.x, b.x, t), lerp(a.y, b.y, t), lerp(a.z, b.z, t));
     }*/
+
+    static float clamp(float v, float minV, float maxV)
+    {
+        return std::min(std::max(v, minV), maxV);
+    }
 };

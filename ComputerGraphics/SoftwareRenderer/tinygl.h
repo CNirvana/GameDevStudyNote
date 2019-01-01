@@ -29,6 +29,10 @@ public:
 		RenderStates::get().setViewMatrix(viewMatrix);
 		RenderStates::get().setProjectionMatrix(projectionMatrix);
 	}
+	void bindTexture(Texture* texture, int slot)
+	{
+		RenderStates::get().bindTexture(texture, slot);
+	}
 
 	void drawElements(const std::vector<Vertex>& vertices, const std::vector<int>& indices, const Mat4x4& transform);
 	void drawTriangle(const Vertex& v0, const Vertex& v1, const Vertex& v2);
@@ -48,6 +52,7 @@ private:
 	inline float edgeFunction(float Ax, float Ay, float Bx, float By, float Cx, float Cy); // CCW
 	bool inTriangle(float Ax, float Ay, float Bx, float By, float Cx, float Cy, float Px, float Py);
 	void scanline(Vec2i p0, Vec2i p1, Vec2i p2, const Color& color);
+	void interpolate(const VertOut& v0, const VertOut& v1, const VertOut& v2, float w0, float w1, float w2, VertOut& out);
 	inline float computeDepth(float invZ0, float w0, float invZ1, float w1, float invZ2, float w2);
 	inline bool clipping(const Vec4f& v);
 
