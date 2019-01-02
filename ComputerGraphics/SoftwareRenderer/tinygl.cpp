@@ -118,9 +118,6 @@ void TinyGL::rasterization(const VertOut& v0, const VertOut& v1, const VertOut& 
 	Vec4f p0 = v0.position;
 	Vec4f p1 = v1.position;
 	Vec4f p2 = v2.position;
-	float invZ0 = 1 / p0.z;
-	float invZ1 = 1 / p1.z;
-	float invZ2 = 1 / p2.z;
 
 	int width = m_FrameBuffer->getWidth();
 	int height = m_FrameBuffer->getHeight();
@@ -162,13 +159,13 @@ void TinyGL::rasterization(const VertOut& v0, const VertOut& v1, const VertOut& 
 				w1 *= invArea;
 				w2 *= invArea;
 
-				float z = computeDepth(invZ0, w0, invZ1, w1, invZ2, w2);
+				float z = computeDepth(v0.invZ, w0, v1.invZ, w1, v2.invZ, w2);
 				if (z < m_FrameBuffer->getDepth(i, j))
 				{
 					m_FrameBuffer->setDepth(i, j, z);
 
 					VertOut fragIN;
-					interpolate(v0, v1, v2, w0 * invZ0 * z, w1 * invZ1 * z, w2 * invZ2 * z, fragIN);
+					interpolate(v0, v1, v2, w0 * v0.invZ * z, w1 * v1.invZ * z, w2 * v2.invZ * z, fragIN);
 
 					Color color = m_Shader->frag(&fragIN);
 					m_FrameBuffer->setPixel(i, j, color);

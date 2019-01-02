@@ -48,7 +48,7 @@ public:
 	void clearDepthBuffer()
 	{
 		for (int i = 0; i < getWidth() * getHeight(); i++)
-			m_DepthBuffer[i] = 1.0f;
+			m_DepthBuffer[i] = std::numeric_limits<float>::max();
 	}
 
 	void clearColorBuffer(const Color& clearColor)

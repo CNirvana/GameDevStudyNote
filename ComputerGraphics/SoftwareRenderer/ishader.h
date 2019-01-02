@@ -46,6 +46,7 @@ public:
 
 	Color frag(const VertOut* IN) override
 	{
-		return RenderStates::get().getTexture(0)->sample(IN->texCoord) * IN->color;
+		//return IN->color;
+		return RenderStates::get().getTexture(0)->sample(IN->texCoord);
 	}
 };
