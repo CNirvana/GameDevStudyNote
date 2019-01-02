@@ -44,13 +44,14 @@ void saveImage(const Color* pixels, int width, int height, std::string fileName)
 
 int main()
 {
-	Texture* texture1 = loadTexture("resources/test.tga");
+	Mesh mesh("resources/head.obj");
+	Texture* texture1 = loadTexture("resources/african_head_diffuse.tga");
 
 	TinyGL tinyGL;
 	tinyGL.initialize(WIDTH, HEIGHT);
 
 	auto projectionMatrix = Mat4x4::perspective(MathUtil::radius(45.0f), (float)WIDTH / HEIGHT, 1.0f, 100.0f);
-	auto viewMatrix = Mat4x4::lookAt({ 0, 10, 16 }, { 0, 0, 0 }, { 0, 1, 0 });
+	auto viewMatrix = Mat4x4::lookAt({ 0, 2, 5 }, { 0, 0, 0 }, { 0, 1, 0 });
 
 	tinyGL.setViewProjectionMatrix(viewMatrix, projectionMatrix);
 	tinyGL.setClearColor(Color::black);
@@ -70,7 +71,7 @@ int main()
 	triangle.indices = { 0, 1, 2 };
 
 	tinyGL.bindTexture(texture1, 0);
-	tinyGL.drawElements(quad.vertices, quad.indices, Mat4x4::scale(5.0f));
+	tinyGL.drawElements(mesh.vertices, mesh.indices, Mat4x4::scale(1.0f));
 
 	auto colorBuffer = tinyGL.getFrameBuffer()->getColorBuffer();
 	auto depthBuffer = tinyGL.getFrameBuffer()->getDepthBuffer();

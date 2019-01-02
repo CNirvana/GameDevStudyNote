@@ -9,7 +9,7 @@ void TinyGL::initialize(int width, int height)
 	m_Shader = new DefaultShader();
 }
 
-void TinyGL::drawElements(const std::vector<Vertex>& vertices, const std::vector<int>& indices, const Mat4x4& transform)
+void TinyGL::drawElements(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const Mat4x4& transform)
 {
 	RenderStates::get().setModelMatrix(transform);
 

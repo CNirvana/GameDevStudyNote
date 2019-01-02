@@ -34,7 +34,7 @@ public:
 		RenderStates::get().bindTexture(texture, slot);
 	}
 
-	void drawElements(const std::vector<Vertex>& vertices, const std::vector<int>& indices, const Mat4x4& transform);
+	void drawElements(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const Mat4x4& transform);
 	void drawTriangle(const Vertex& v0, const Vertex& v1, const Vertex& v2);
 	void drawLine(Vec2i p0, Vec2i p1, const Color& color);
 	void clear(int flags);
