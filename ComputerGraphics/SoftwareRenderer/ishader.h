@@ -22,7 +22,6 @@ struct VertOut
 	Vec2f texCoord;
 	Vec3f normal;
 	Color color;
-	float invZ;
 };
 
 class IShader
@@ -46,7 +45,11 @@ public:
 
 	Color frag(const VertOut* IN) override
 	{
-		//return IN->color;
-		return RenderStates::get().getTexture(0)->sample(IN->texCoord);
+		const Vec3f lightDir(1.0f, 1.0f, 1.0f);
+		float NdotL = std::max(0.0f, Vec3f::dot(Vec3f::normalize(IN->normal), Vec3f::normalize(lightDir)));
+		Color col = RenderStates::get().getTexture(0)->sample(IN->texCoord);
+		col *= NdotL;
+		col.a = 1.0f;
+		return col;
 	}
 };

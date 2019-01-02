@@ -26,6 +26,7 @@ Color operator + (const Color& left, const Color& right);
 Color operator - (const Color& left, const Color& right);
 Color operator * (const Color& left, const Color& right);
 Color& operator *= (Color& left, const Color& right);
+Color& operator *= (Color& left, float right);
 Color operator * (const Color& c, float t);
 Color operator * (float t, const Color& c);
 Color operator / (const Color& c, float t);

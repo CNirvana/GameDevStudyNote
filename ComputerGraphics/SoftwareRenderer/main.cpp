@@ -44,7 +44,7 @@ void saveImage(const Color* pixels, int width, int height, std::string fileName)
 
 int main()
 {
-	Texture* texture1 = loadTexture("test.tga");
+	Texture* texture1 = loadTexture("resources/test.tga");
 
 	TinyGL tinyGL;
 	tinyGL.initialize(WIDTH, HEIGHT);

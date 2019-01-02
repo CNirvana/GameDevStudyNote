@@ -39,21 +39,9 @@ void TinyGL::drawTriangle(const Vertex& v0, const Vertex& v1, const Vertex& v2)
 		return;
 	}
 
-	vertOut0.invZ = 1 / vertOut0.position.w;
-	vertOut1.invZ = 1 / vertOut1.position.w;
-	vertOut2.invZ = 1 / vertOut2.position.w;
-	vertOut0.position /= vertOut0.position.w;
-	vertOut1.position /= vertOut1.position.w;
-	vertOut2.position /= vertOut2.position.w;
-
-	int width = m_FrameBuffer->getWidth() - 1;
-	int height = m_FrameBuffer->getHeight() - 1;
-	vertOut0.position.x = (vertOut0.position.x + 1) * 0.5 * width;
-	vertOut0.position.y = (1 - vertOut0.position.y) * 0.5 * height;
-	vertOut1.position.x = (vertOut1.position.x + 1) * 0.5 * width;
-	vertOut1.position.y = (1 - vertOut1.position.y) * 0.5 * height;
-	vertOut2.position.x = (vertOut2.position.x + 1) * 0.5 * width;
-	vertOut2.position.y = (1 - vertOut2.position.y) * 0.5 * height;
+	clipToNDC(vertOut0);
+	clipToNDC(vertOut1);
+	clipToNDC(vertOut2);
 
 	switch (RenderStates::get().getRenderMode())
 	{
@@ -159,13 +147,13 @@ void TinyGL::rasterization(const VertOut& v0, const VertOut& v1, const VertOut& 
 				w1 *= invArea;
 				w2 *= invArea;
 
-				float z = computeDepth(v0.invZ, w0, v1.invZ, w1, v2.invZ, w2);
+				float z = computeDepth(v0.position.w, w0, v1.position.w, w1, v2.position.w, w2);
 				if (z < m_FrameBuffer->getDepth(i, j))
 				{
 					m_FrameBuffer->setDepth(i, j, z);
 
 					VertOut fragIN;
-					interpolate(v0, v1, v2, w0 * v0.invZ * z, w1 * v1.invZ * z, w2 * v2.invZ * z, fragIN);
+					interpolate(v0, v1, v2, w0 * z, w1 * z, w2 * z, fragIN);
 
 					Color color = m_Shader->frag(&fragIN);
 					m_FrameBuffer->setPixel(i, j, color);
@@ -186,6 +174,23 @@ void TinyGL::wireframe(const VertOut& v0, const VertOut& v1, const VertOut& v2)
 	drawLine(p2, p0, Color::white);
 }
 
+void TinyGL::clipToNDC(VertOut& v) const
+{
+	float invZ = 1 / v.position.w;
+	v.position *= invZ;
+	v.texCoord *= invZ;
+	v.normal *= invZ;
+	v.color *= invZ;
+	v.worldPos *= invZ;
+
+	int width = m_FrameBuffer->getWidth() - 1;
+	int height = m_FrameBuffer->getHeight() - 1;
+	v.position.x = (v.position.x + 1) * 0.5 * width;
+	v.position.y = (1 - v.position.y) * 0.5 * height;
+
+	v.position.w = invZ;
+}
+
 void TinyGL::clear(int flags)
 {
 	if (flags & ClearFlags::ColorBuffer)
@@ -198,13 +203,13 @@ void TinyGL::clear(int flags)
 	}
 }
 
-float TinyGL::edgeFunction(float Ax, float Ay, float Bx, float By, float Px, float Py)
+float TinyGL::edgeFunction(float Ax, float Ay, float Bx, float By, float Px, float Py) const
 {
 	// return (Px - Ax) * (By - Ay) - (Py - Ay) * (Bx -Ax); // CW to right
 	return (Ax - Bx) * (Py - Ay) - (Ay - By) * (Px - Ax); // CCW to left
 }
 
-bool TinyGL::inTriangle(float Ax, float Ay, float Bx, float By, float Cx, float Cy, float Px, float Py)
+bool TinyGL::inTriangle(float Ax, float Ay, float Bx, float By, float Cx, float Cy, float Px, float Py) const
 {
 	bool inside = true;
 	inside &= (edgeFunction(Ax, Ay, Bx, By, Px, Py) >= 0);
@@ -252,7 +257,7 @@ void TinyGL::scanline(Vec2i p0, Vec2i p1, Vec2i p2, const Color& color)
 	}
 }
 
-void TinyGL::interpolate(const VertOut& v0, const VertOut& v1, const VertOut& v2, float w0, float w1, float w2, VertOut& out)
+void TinyGL::interpolate(const VertOut& v0, const VertOut& v1, const VertOut& v2, float w0, float w1, float w2, VertOut& out) const
 {
 	out.position = v0.position * w0 + v1.position * w1 + v2.position * w2;
 	out.color = v0.color * w0 + v1.color * w1 + v2.color * w2;
@@ -261,13 +266,13 @@ void TinyGL::interpolate(const VertOut& v0, const VertOut& v1, const VertOut& v2
 	out.worldPos = v0.worldPos * w0 + v1.worldPos * w1 + v2.worldPos * w2;
 }
 
-float TinyGL::computeDepth(float invZ0, float w0, float invZ1, float w1, float invZ2, float w2)
+float TinyGL::computeDepth(float invZ0, float w0, float invZ1, float w1, float invZ2, float w2) const
 {
 	float invZ = invZ0 * w0 + invZ1 * w1 + invZ2 * w2;
 	return 1 / invZ;
 }
 
-bool TinyGL::clipping(const Vec4f& v)
+bool TinyGL::clipping(const Vec4f& v) const
 {
 	return (v.x < -v.w || v.x > v.w)
 		|| (v.y < -v.w || v.y > v.w)

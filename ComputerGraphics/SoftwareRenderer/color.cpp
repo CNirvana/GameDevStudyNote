@@ -48,6 +48,15 @@ Color& operator *= (Color& left, const Color& right)
 	return left;
 }
 
+Color& operator *= (Color& left, float right)
+{
+	left.r *= right;
+	left.g *= right;
+	left.b *= right;
+	left.a *= right;
+	return left;
+}
+
 Color operator * (const Color& c, float t)
 {
 	return Color(
