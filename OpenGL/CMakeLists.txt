@@ -20,14 +20,6 @@ file(GLOB SOURCES
 add_library(Core ${SOURCES})
 target_link_libraries(Core ${LIBS})
 
-# framebuffer
-file(GLOB SOURCES
-    ${PROJECT_SOURCE_DIR}/sandbox/framebuffer/*.h
-    ${PROJECT_SOURCE_DIR}/sandbox/framebuffer/*.cpp
-)
-add_executable(FrameBuffer ${SOURCES})
-target_link_libraries(FrameBuffer Core)
-
 # test
 file(GLOB SOURCES
     ${PROJECT_SOURCE_DIR}/sandbox/test/*.h
@@ -35,3 +27,23 @@ file(GLOB SOURCES
 )
 add_executable(Test ${SOURCES})
 target_link_libraries(Test Core)
+
+set(CHAPTERS
+    FrameBuffer
+)
+
+foreach(CHAPTER ${CHAPTERS})
+    file(GLOB SOURCES
+        ${PROJECT_SOURCE_DIR}/sandbox/${CHAPTER}/*.h
+        ${PROJECT_SOURCE_DIR}/sandbox/${CHAPTER}/*.cpp
+    )
+    set(NAME ${CHAPTER})
+    add_executable(${NAME} ${SOURCES})
+    target_link_libraries(${NAME} Core)
+    set_target_properties(${NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/build/bin/${CHAPTER}")
+    foreach(RESOURCE ${RESOURCES})
+        add_custom_command(TARGET ${NAME} PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${RESOURCE} $<TARGET_FILE_DIR:${NAME}>)
+    endforeach(RESOURCE)
+    add_custom_command(TARGET ${NAME} PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/sandbox/${CHAPTER}/resources $<TARGET_FILE_DIR:${NAME}>)
+    add_custom_command(TARGET ${NAME} PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/bin/assimp-vc140-mt.dll $<TARGET_FILE_DIR:${NAME}>)
+endforeach(CHAPTER)
