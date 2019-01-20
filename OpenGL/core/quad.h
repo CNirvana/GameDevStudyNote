@@ -1,6 +1,6 @@
 #pragma once
 
-#include "utility.h"
+#include "common.h"
 #include "iglresource.h"
 
 class Quad : IGLResource
@@ -16,9 +16,9 @@ public:
 
 	virtual void release() override
 	{
-		GL_CALL(glDeleteVertexArrays(1, &m_VAO));
+		/*GL_CALL(glDeleteVertexArrays(1, &m_VAO));
 		GL_CALL(glDeleteBuffers(1, &m_VBO));
-		GL_CALL(glDeleteBuffers(1, &m_IBO));
+		GL_CALL(glDeleteBuffers(1, &m_IBO));*/
 	}
 
 private:

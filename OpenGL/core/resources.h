@@ -1,6 +1,5 @@
 #pragma once
 
-#include "utility.h"
 #include "texture.h"
 #include "shader.h"
 #include "model.h"
@@ -31,13 +30,14 @@ public:
 		return getInstance()->loadShaderFromSourceInternal(name, vSource, fSource, gSource);
 	}
 	static Shader* getShader(const std::string& name);
-
-	void finalize();
+    static Texture* getTexture(const std::string& path);
+    static void unloadAll() { getInstance()->unloadAllInternal(); }
 
 protected:
 	Texture* loadTextureInternal(const std::string& path, const TextureProperty& textureProperty);
 	Shader* loadShaderFromFileInternal(const std::string& name, const char* vertexPath, const char* fragmentPath, const char* geometryPath);
 	Shader* loadShaderFromSourceInternal(const std::string& name, const char* vSource, const char* fSource, const char* gSource);
+    void unloadAllInternal();
 
 private:
 	static Resources* m_Instance;

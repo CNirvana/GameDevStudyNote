@@ -1,15 +1,26 @@
 #pragma once
 
 #include "vec3.hpp"
-#include "utility.h"
 #include "ray.h"
 
 class Camera
 {
 public:
-	Camera(const Vec3f& position, const Vec3f& front, const Vec3f& up, float fov, float aspect);
+	Camera(const Vec3f& position, const Vec3f& front, const Vec3f& up, float fov, float aspect)
+		: m_Position(position), m_Front(Vec3f::normalize(front)), m_Fov(fov), m_Aspect(aspect)
+	{
+		Vec3f u = Vec3f::normalize(up);
+		m_right = m_Front.cross(up);
+		m_Up = m_right.cross(m_Front);
+		recalculateFovScale();
+	}
 
-	Ray screenPointToRay(float x, float y) const;
+	Ray screenPointToRay(float x, float y) const
+	{
+		Vec3f r = m_right * ((2 * x - 1) * m_FovScale);
+		Vec3f u = m_Up * ((2 * y - 1) * m_FovScale / m_Aspect);
+		return Ray(m_Position, Vec3f::normalize(m_Front + r + u));
+	}
 
 	float getAspect() const { return m_Aspect; }
 	void setAspect(float aspect) { m_Aspect = aspect; }

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "iglresource.h"
-#include "utility.h"
+#include "common.h"
 #include "stb_image.h"
 
 struct TextureProperty
@@ -26,7 +26,7 @@ public:
 	const std::string& getPath() const { return m_Path; }
 	TextureType getTextureType() const { return m_Property.type; }
 
-	virtual void release() override { GL_CALL(glDeleteTextures(1, &m_ID)); }
+	virtual void release() override { /*GL_CALL(glDeleteTextures(1, &m_ID));*/ }
 
 private:
 	std::string m_Path;

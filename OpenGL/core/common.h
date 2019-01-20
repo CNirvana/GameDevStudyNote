@@ -1,6 +1,7 @@
 #pragma once
 
 #include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -16,6 +17,7 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <memory>
 
 GLenum glCheckError_(const char *file, int line);
 #define glCheckError() glCheckError_(__FILE__, __LINE__)
@@ -26,6 +28,7 @@ GLenum glCheckError_(const char *file, int line);
 	}
 
 #define SAFE_DELETE(p) { if(p) { delete (p); (p) = nullptr; } }
+#define SAFE_RELEASE(p) { if(p) { p->release(); SAFE_DELETE(p); } }
 
 float getTime();
 

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "iglresource.h"
-#include "utility.h"
+#include "common.h"
 
 class DepthMap : IGLResource
 {

@@ -1,8 +1,9 @@
 #pragma once
 
-#include "utility.h"
+#include "common.h"
+#include "iglresource.h"
 
-class Cubemap
+class Cubemap : public IGLResource
 {
 public:
 	Cubemap(const std::vector<std::string>& rltbfb);
@@ -19,6 +20,8 @@ public:
 		GL_CALL(glDrawArrays(GL_TRIANGLES, 0, 36));
 		GL_CALL(glBindVertexArray(0));
 	}
+
+	virtual void release() override;
 
 protected:
 	unsigned int loadCubemap(const std::vector<std::string>& rltbfb);

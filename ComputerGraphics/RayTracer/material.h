@@ -1,7 +1,7 @@
 #pragma once
 
+#include "common.h"
 #include "shader.h"
-#include "utility.h"
 
 class Material
 {

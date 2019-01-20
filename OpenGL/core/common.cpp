@@ -1,5 +1,4 @@
-#include "utility.h"
-#include <GLFW\glfw3.h>
+#include "common.h"
 
 float getTime()
 {

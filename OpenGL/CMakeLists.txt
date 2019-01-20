@@ -11,6 +11,7 @@ link_directories(${PROJECT_SOURCE_DIR}/lib)
 include_directories(${PROJECT_SOURCE_DIR}/include)
 include_directories(${PROJECT_SOURCE_DIR}/core)
 
+# core
 file(GLOB SOURCES
     ${PROJECT_SOURCE_DIR}/core/*.h
     ${PROJECT_SOURCE_DIR}/core/*.cpp
@@ -19,6 +20,15 @@ file(GLOB SOURCES
 add_library(Core ${SOURCES})
 target_link_libraries(Core ${LIBS})
 
+# framebuffer
+file(GLOB SOURCES
+    ${PROJECT_SOURCE_DIR}/sandbox/framebuffer/*.h
+    ${PROJECT_SOURCE_DIR}/sandbox/framebuffer/*.cpp
+)
+add_executable(FrameBuffer ${SOURCES})
+target_link_libraries(FrameBuffer Core)
+
+# test
 file(GLOB SOURCES
     ${PROJECT_SOURCE_DIR}/sandbox/test/*.h
     ${PROJECT_SOURCE_DIR}/sandbox/test/*.cpp

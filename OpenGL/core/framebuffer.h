@@ -1,6 +1,6 @@
 #pragma once
 
-#include "utility.h"
+#include "common.h"
 #include "iglresource.h"
 
 class FrameBuffer : public IGLResource

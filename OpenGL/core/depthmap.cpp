@@ -23,8 +23,8 @@ DepthMap::DepthMap(int width, int height, TextureWrapMode wrapMode, TextureFilte
 
 void DepthMap::release()
 {
-	GL_CALL(glDeleteTextures(1, &m_DepthMap));
-	GL_CALL(glDeleteFramebuffers(1, &m_DepthMapFBO));
+	/*GL_CALL(glDeleteTextures(1, &m_DepthMap));
+	GL_CALL(glDeleteFramebuffers(1, &m_DepthMapFBO));*/
 }
 
 void DepthMap::beginSample() const

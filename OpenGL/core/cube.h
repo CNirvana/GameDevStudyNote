@@ -1,6 +1,6 @@
 #pragma once
 
-#include "utility.h"
+#include "common.h"
 #include "renderer.h"
 
 class Cube : public IDrawable, public IGLResource

@@ -7,6 +7,7 @@ class MathUtil
 public:
     static const float deg2rad;
     static const float rad2deg;
+    static const float pi;
 
     static float radius(float degree)
     {
@@ -36,5 +37,10 @@ public:
     static float clamp(float v, float minV, float maxV)
     {
         return std::min(std::max(v, minV), maxV);
+    }
+
+    static float clamp01(float v)
+    {
+        return std::min(std::max(v, 0.0f), 1.0f);
     }
 };

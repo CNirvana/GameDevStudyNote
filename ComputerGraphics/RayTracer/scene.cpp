@@ -49,7 +49,7 @@ void Scene::render()
 
 Color Scene::rayTrace(const Ray& ray)
 {
-	float minDistance = 10000000;
+	float minDistance = std::numeric_limits<float>::max();
 	RaycastResult minRes;
 
 	for (size_t i = 0; i < m_Entities.size(); i++)

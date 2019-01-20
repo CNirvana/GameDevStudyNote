@@ -1,6 +1,6 @@
 #pragma once
 
-#include "utility.h"
+#include "common.h"
 #include "iglresource.h"
 
 class Shader : IGLResource
@@ -70,7 +70,7 @@ public:
 		glUniformMatrix4fv(glGetUniformLocation(m_ID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
 	}
 
-	virtual void release() override { GL_CALL(glDeleteProgram(m_ID)); }
+	virtual void release() override { /*GL_CALL(glDeleteProgram(m_ID));*/ }
 
 protected:
 	void checkCompileErrors(GLuint shader, std::string type);

@@ -13,6 +13,8 @@ public:
 	Renderer();
 	virtual ~Renderer();
 
+    void setup();
+
 	glm::mat4 getProjectionMatrix() const { return m_ProjectionMatrix; }
 	void setProjectionMatrix(const glm::mat4& projectionMatrix) { m_ProjectionMatrix = projectionMatrix; }
 	glm::mat4 getViewMatrix() const { return m_ViewMatrix; }
@@ -62,11 +64,11 @@ private:
 	Shader* m_SkyboxShader;
 	Cubemap* m_Skybox;
 	DepthMap* m_DepthMap;
+	Quad* m_OffscreenQuad;
 
 	glm::mat4 m_ProjectionMatrix;
 	glm::mat4 m_ViewMatrix;
 	glm::vec3 m_CameraPos;
-	Quad m_OffscreenQuad;
 	glm::vec4 m_ClearColor;
 
 };

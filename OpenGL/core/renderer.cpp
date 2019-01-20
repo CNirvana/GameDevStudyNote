@@ -38,21 +38,28 @@ const char* depthMapFragSource =
 "	// gl_FragColor = gl_FragCoord.z;\n"
 "}\n";
 
-Renderer::Renderer() : m_Skybox(nullptr)
+Renderer::Renderer() : m_Skybox(nullptr), m_OffscreenQuad(nullptr)
 {
-	m_SkyboxShader = Resources::loadShaderFromSource("skybox", skyboxVertSource, skyboxFragSource);
-	m_SkyboxShader->bind();
-	m_SkyboxShader->setInt("u_skybox", 0);
-	m_SkyboxShader->unbind();
-
-	m_DepthMap = new DepthMap();
 }
 
 Renderer::~Renderer()
 {
 	m_DepthMap->release();
 	SAFE_DELETE(m_DepthMap);
-	SAFE_DELETE(m_Skybox);
+    SAFE_RELEASE(m_OffscreenQuad);
+	SAFE_RELEASE(m_Skybox);
+}
+
+void Renderer::setup()
+{
+    m_SkyboxShader = Resources::loadShaderFromSource("skybox", skyboxVertSource, skyboxFragSource);
+    m_SkyboxShader->bind();
+    m_SkyboxShader->setInt("u_skybox", 0);
+    m_SkyboxShader->unbind();
+
+    m_DepthMap = new DepthMap();
+
+    m_OffscreenQuad = new Quad();
 }
 
 void Renderer::draw(IDrawable& drawable) const
@@ -110,7 +117,7 @@ void Renderer::drawFrameBuffer(const FrameBuffer& frameBuffer, Shader* shader) c
 	shader->setVec4("u_screenTex_texelSize", glm::vec4(1.0f / frameBuffer.getWidth(), 1.0f / frameBuffer.getHeight(), frameBuffer.getWidth(), frameBuffer.getHeight()));
 	shader->setFloat("u_time", getTime());
 	frameBuffer.bindColorBuffer();
-	m_OffscreenQuad.draw();
+	m_OffscreenQuad->draw();
 }
 
 void Renderer::clear(bool color, bool depth, bool stencil) const

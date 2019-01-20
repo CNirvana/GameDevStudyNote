@@ -1,9 +1,10 @@
 #pragma once
 
-#include <cmath>
+#include <iostream>
 #include <algorithm>
 
-float clamp(float value, float min, float max);
-float clamp01(float value);
+#include <string>
+#include <vector>
+#include <limits>
 
 #define SAFE_DELETE(p) { if(p) { delete (p); (p) = nullptr; } }

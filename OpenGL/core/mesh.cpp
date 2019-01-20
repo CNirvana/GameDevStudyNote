@@ -8,9 +8,9 @@ Mesh::Mesh(Shader* shader, const std::vector<Vertex>& _vertices, const std::vect
 
 void Mesh::release()
 {
-	GL_CALL(glDeleteVertexArrays(1, &m_VAO));
+	/*GL_CALL(glDeleteVertexArrays(1, &m_VAO));
 	GL_CALL(glDeleteBuffers(1, &m_VBO));
-	GL_CALL(glDeleteBuffers(1, &m_IBO));
+	GL_CALL(glDeleteBuffers(1, &m_IBO));*/
 }
 
 void Mesh::setupMesh()

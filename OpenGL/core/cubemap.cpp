@@ -91,3 +91,8 @@ unsigned int Cubemap::loadCubemap(const std::vector<std::string>& rltbfb)
 
 	return textureID;
 }
+
+void Cubemap::release()
+{
+	
+}

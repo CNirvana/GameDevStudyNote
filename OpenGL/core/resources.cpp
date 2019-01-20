@@ -47,7 +47,17 @@ Shader* Resources::getShader(const std::string& name)
 	return getInstance()->m_Shaders[name];
 }
 
-void Resources::finalize()
+Texture* Resources::getTexture(const std::string& path)
+{
+    if (getInstance()->m_Textures.find(path) == getInstance()->m_Textures.end())
+    {
+        return nullptr;
+    }
+
+    return getInstance()->m_Textures[path];
+}
+
+void Resources::unloadAllInternal()
 {
 	for (auto it = m_Textures.begin(); it != m_Textures.end(); it++)
 	{
