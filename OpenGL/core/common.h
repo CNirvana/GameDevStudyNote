@@ -27,6 +27,12 @@ GLenum glCheckError_(const char *file, int line);
 		glCheckError();\
 	}
 
+#define DECLARE_APPLICATION(name) \
+	Application* CreateApplication()\
+	{\
+		return new name();\
+	}
+
 #define SAFE_DELETE(p) { if(p) { delete (p); (p) = nullptr; } }
 #define SAFE_RELEASE(p) { if(p) { p->release(); SAFE_DELETE(p); } }
 

@@ -56,7 +56,6 @@ bool Application::setup()
 
 void Application::run()
 {
-    m_DeltaTime = 0;
     m_LastFrame = 0;
 
     m_Renderer.setup();
@@ -64,18 +63,29 @@ void Application::run()
     while (!glfwWindowShouldClose(m_Window))
     {
         float currentFrame = glfwGetTime();
-        m_DeltaTime = currentFrame - m_LastFrame;
+        float deltaTime = currentFrame - m_LastFrame;
         m_LastFrame = currentFrame;
 
-        processInput(m_Window);
+        processInput(m_Window, deltaTime);
 
-        update();
+        update(deltaTime);
+        setRenderState();
+        render(m_Renderer);
 
         glfwSwapBuffers(m_Window);
         glfwPollEvents();
     }
 
     glfwTerminate();
+}
+
+void Application::setRenderState()
+{
+    glm::mat4 projection = glm::perspective(glm::radians(m_Camera.getZoom()), (float)getWidth() / getHeight(), 0.1f, 100.0f);
+    glm::mat4 view = m_Camera.getViewMatrix();
+    m_Renderer.setProjectionMatrix(projection);
+    m_Renderer.setViewMatrix(view);
+    m_Renderer.setCameraPos(m_Camera.getPosition());
 }
 
 void Application::mouseCallback(GLFWwindow* window, double xPos, double yPos)
@@ -100,18 +110,18 @@ void Application::scrollCallback(GLFWwindow* window, double xOffset, double yOff
     m_Camera.processMouseScroll(yOffset);
 }
 
-void Application::processInput(GLFWwindow* window)
+void Application::processInput(GLFWwindow* window, float deltaTime)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
     {
         glfwSetWindowShouldClose(window, true);
     }
 
-    float cameraSpeed = 2.5f * m_DeltaTime;
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) m_Camera.processKeyboard(FORWARD, m_DeltaTime);
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) m_Camera.processKeyboard(BACKWARD, m_DeltaTime);
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) m_Camera.processKeyboard(LEFT, m_DeltaTime);
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) m_Camera.processKeyboard(RIGHT, m_DeltaTime);
+    float cameraSpeed = 2.5f * deltaTime;
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) m_Camera.processKeyboard(FORWARD, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) m_Camera.processKeyboard(BACKWARD, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) m_Camera.processKeyboard(LEFT, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) m_Camera.processKeyboard(RIGHT, deltaTime);
 
     if (glfwGetKey(window, GLFW_KEY_SPACE))
     {

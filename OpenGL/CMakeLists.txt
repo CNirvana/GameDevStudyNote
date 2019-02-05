@@ -20,16 +20,10 @@ file(GLOB SOURCES
 add_library(Core ${SOURCES})
 target_link_libraries(Core ${LIBS})
 
-# test
-file(GLOB SOURCES
-    ${PROJECT_SOURCE_DIR}/sandbox/test/*.h
-    ${PROJECT_SOURCE_DIR}/sandbox/test/*.cpp
-)
-add_executable(Test ${SOURCES})
-target_link_libraries(Test Core)
-
 set(CHAPTERS
     FrameBuffer
+    Shadow
+    Lighting
 )
 
 foreach(CHAPTER ${CHAPTERS})

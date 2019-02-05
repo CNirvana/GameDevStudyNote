@@ -76,8 +76,8 @@ void Renderer::drawWithShader(IDrawable& drawable, Shader* shader) const
 	shader->setMat4("u_view", m_ViewMatrix);
 	shader->setMat4("u_model", modelMatrix);
 	shader->setMat4("u_mvp", m_ProjectionMatrix * m_ViewMatrix * modelMatrix);
-	shader->setMat4("u_world2obj", glm::transpose(glm::inverse(modelMatrix)));
-	shader->setVec3("u_camera_pos", m_CameraPos);
+	shader->setMat4("u_worldToObj", glm::transpose(glm::inverse(modelMatrix)));
+	shader->setVec3("u_cameraPos", m_CameraPos);
 	if (m_Skybox != nullptr)
 	{
 		shader->setInt("u_skybox", 16);

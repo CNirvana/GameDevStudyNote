@@ -38,7 +38,8 @@ public:
     int getHeight() const { return m_Config.height; }
 
     virtual void initialize() = 0;
-    virtual void update() = 0;
+    virtual void update(float deltaTime) = 0;
+    virtual void render(const Renderer& renderer) = 0;
     virtual void shutdown() = 0;
 
     virtual void mouseCallback(GLFWwindow* window, double xPos, double yPos);
@@ -48,18 +49,19 @@ protected:
     ApplicationConfig m_Config;
     GLFWwindow* m_Window;
 
-    float m_DeltaTime;
-
-    Renderer m_Renderer;
     Camera m_Camera;
 
-    virtual void processInput(GLFWwindow* window);
+    virtual void processInput(GLFWwindow* window, float deltaTime);
 
 private:
+    void setRenderState();
+
     float m_LastX;
     float m_LastY;
     bool m_FirstMouse;
     float m_LastFrame;
+
+    Renderer m_Renderer;
 
     static Application* s_Instance;
 };

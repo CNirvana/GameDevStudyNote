@@ -3,13 +3,13 @@
 void DirectionalLight::writeProperties(const Shader& shader)
 {
 	shader.setVec3("dirLight.lightColor", m_Color * m_Intensity);
-	shader.setVec3("dirLight.lightDir", -m_LightDir);
+	shader.setVec3("dirLight.lightDir", m_LightDir);
 }
 
 void DirectionalLight::writeProperties(const Shader& shader, int lightIndex)
 {
 	shader.setVec3("dirLights[" + std::to_string(lightIndex) + "].lightColor", m_Color * m_Intensity);
-	shader.setVec3("dirLights[" + std::to_string(lightIndex) + "].lightDir", -m_LightDir);
+	shader.setVec3("dirLights[" + std::to_string(lightIndex) + "].lightDir", m_LightDir);
 }
 
 void PointLight::writeProperties(const Shader& shader)
