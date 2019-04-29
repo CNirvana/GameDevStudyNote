@@ -7,6 +7,10 @@ project(ComputerGraphics)
 
 include_directories(${PROJECT_SOURCE_DIR}/Common)
 include_directories(${PROJECT_SOURCE_DIR}/Math)
+include_directories(${PROJECT_SOURCE_DIR}/SDL2/include)
+
+set(LIBS SDL2.lib)
+link_directories(${PROJECT_SOURCE_DIR}/SDL2/lib/x86)
 
 file(GLOB SOURCES
     Common/*.cpp
@@ -32,4 +36,4 @@ file(GLOB SOURCES
     SoftwareRenderer/*.cpp
 )
 add_executable(SoftwareRenderer ${SOURCES})
-target_link_libraries(SoftwareRenderer Common Math)
+target_link_libraries(SoftwareRenderer Common Math ${LIBS})
