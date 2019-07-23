@@ -38,7 +38,7 @@ public:
     int getHeight() const { return m_Config.height; }
 
     virtual void initialize() = 0;
-    virtual void update(float deltaTime) = 0;
+    virtual void update(float dt) = 0;
     virtual void render(const Renderer& renderer) = 0;
     virtual void shutdown() = 0;
 

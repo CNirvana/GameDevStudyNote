@@ -7,7 +7,7 @@ public:
     ~Sandbox() {}
 
     virtual void initialize() override;
-    virtual void update() override;
+    virtual void update(float dt) override;
     virtual void shutdown() override;
 
 private:
@@ -63,7 +63,7 @@ void Sandbox::shutdown()
     Resources::unloadAll();
 }
 
-void Sandbox::update()
+void Sandbox::update(float dt)
 {
     m_Renderer.bindFrameBuffer(*m_FrameBuffer);
 

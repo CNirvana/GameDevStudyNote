@@ -14,7 +14,9 @@ include_directories(${PROJECT_SOURCE_DIR}/core)
 # core
 file(GLOB SOURCES
     ${PROJECT_SOURCE_DIR}/core/*.h
+    ${PROJECT_SOURCE_DIR}/core/renderer/*.h
     ${PROJECT_SOURCE_DIR}/core/*.cpp
+    ${PROJECT_SOURCE_DIR}/core/renderer/*.cpp
     ${PROJECT_SOURCE_DIR}/core/*.c
 )
 add_library(Core ${SOURCES})
