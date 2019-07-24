@@ -5,7 +5,7 @@
 class IndexBuffer
 {
 public:
-    IndexBuffer(unsigned int* indices, unsigned int size);
+    IndexBuffer(const std::vector<unsigned int>& indices);
     ~IndexBuffer();
 
     void bind() const;

@@ -8,6 +8,7 @@ public:
 
     virtual void initialize() override;
     virtual void update(float dt) override;
+    virtual void render(Renderer& renderer) override;
     virtual void shutdown() override;
 
 private:
@@ -44,7 +45,7 @@ void Sandbox::initialize()
 
     m_Cube = new Cube(cubeShader);
 
-    m_Renderer.setSkybox(new Cubemap(std::vector<std::string>{
+    getRenderer()->setSkybox(new Cubemap(std::vector<std::string>{
         "textures/right.jpg",
         "textures/left.jpg",
         "textures/top.jpg",
@@ -65,27 +66,31 @@ void Sandbox::shutdown()
 
 void Sandbox::update(float dt)
 {
-    m_Renderer.bindFrameBuffer(*m_FrameBuffer);
+}
 
-    m_Renderer.clear();
+void Sandbox::render(Renderer& renderer)
+{
+    renderer.bindFrameBuffer(*m_FrameBuffer);
+
+    renderer.clear();
 
     glm::mat4 projection = glm::perspective(glm::radians(m_Camera.getZoom()), (float)getWidth() / getHeight(), 0.1f, 100.0f);
     glm::mat4 view = m_Camera.getViewMatrix();
     glm::mat4 model = glm::mat4(1.0f);
-    m_Renderer.setProjectionMatrix(projection);
-    m_Renderer.setViewMatrix(view);
-    m_Renderer.setCameraPos(m_Camera.getPosition());
+    renderer.setProjectionMatrix(projection);
+    renderer.setViewMatrix(view);
+    renderer.setCameraPos(m_Camera.getPosition());
 
     m_Cube->position = glm::vec3(5, 5, 0);
-    m_Renderer.draw(*m_Cube);
+    renderer.draw(*m_Cube);
 
     m_Plane->position = glm::vec3(0, -1, 0);
     m_Plane->scale = glm::vec3(100, 1, 100);
-    m_Renderer.draw(*m_Plane);
+    renderer.draw(*m_Plane);
 
-    m_Renderer.drawSkybox();
+    renderer.drawSkybox();
 
-    m_Renderer.drawFrameBuffer(*m_FrameBuffer, m_FrameBufferShader);
+    renderer.drawFrameBuffer(*m_FrameBuffer, m_FrameBufferShader);
 }
 
 Application* CreateApplication()

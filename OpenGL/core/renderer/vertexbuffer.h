@@ -1,11 +1,12 @@
 #pragma once
 
 #include "common.h"
+#include "vertex.h"
 
 class VertexBuffer
 {
 public:
-    VertexBuffer(float* vertices, unsigned int size);
+    VertexBuffer(const std::vector<Vertex>& vertices);
     ~VertexBuffer();
 
     void bind() const;

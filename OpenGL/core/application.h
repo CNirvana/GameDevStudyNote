@@ -36,10 +36,11 @@ public:
 
     int getWidth() const { return m_Config.width; }
     int getHeight() const { return m_Config.height; }
+    Renderer* getRenderer() { return &m_Renderer; }
 
     virtual void initialize() = 0;
     virtual void update(float dt) = 0;
-    virtual void render(const Renderer& renderer) = 0;
+    virtual void render(Renderer& renderer) = 0;
     virtual void shutdown() = 0;
 
     virtual void mouseCallback(GLFWwindow* window, double xPos, double yPos);
