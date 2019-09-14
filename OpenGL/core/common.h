@@ -22,123 +22,129 @@
 GLenum glCheckError_(const char *file, int line);
 #define glCheckError() glCheckError_(__FILE__, __LINE__)
 #define GL_CALL(x)\
-	{\
-		x;\
-		glCheckError();\
-	}
+    {\
+        x;\
+        glCheckError();\
+    }
 
 #define DECLARE_APPLICATION(name) \
-	Application* CreateApplication()\
-	{\
-		return new name();\
-	}
+    Application* CreateApplication()\
+    {\
+        return new name();\
+    }
 
 #define SAFE_DELETE(p) { if(p) { delete (p); (p) = nullptr; } }
 #define SAFE_RELEASE(p) { if(p) { p->release(); SAFE_DELETE(p); } }
+
+template<typename T>
+using Ref = std::shared_ptr<T>;
+
+template<typename T>
+using Scope = std::unique_ptr<T>;
 
 float getTime();
 
 enum TextureType
 {
-	None,
-	Diffuse,
-	Specular,
-	Normal,
-	Height
+    None,
+    Diffuse,
+    Specular,
+    Normal,
+    Height
 };
 
 enum TextureWrapMode
 {
-	Clamp,
-	Repeat
+    Clamp,
+    Repeat
 };
 GLenum toGLTextureWrapMode(TextureWrapMode wrapMode);
 
 enum TextureFilterMode
 {
-	Nearest,
-	Bilinear,
-	Trilinear,
+    Nearest,
+    Bilinear,
+    Trilinear,
 };
 GLenum toGLTextureFilterMode(TextureFilterMode filterMode);
 
 enum class DepthTestFunc
 {
-	Never,
-	Less,
-	Equal,
-	LessEqual,
-	Greater,
-	NotEqual,
-	GreaterEqual,
-	Always
+    Never,
+    Less,
+    Equal,
+    LessEqual,
+    Greater,
+    NotEqual,
+    GreaterEqual,
+    Always
 };
 GLenum toGLDepthFunc(DepthTestFunc func);
 
 enum class StencilFunc
 {
-	Never,
-	Less,
-	Equal,
-	LessEqual,
-	Greater,
-	NotEqual,
-	GreaterEqual,
-	Always
+    Never,
+    Less,
+    Equal,
+    LessEqual,
+    Greater,
+    NotEqual,
+    GreaterEqual,
+    Always
 };
 GLenum toGLStencilFunc(StencilFunc func);
 
 enum class StencilOp
 {
-	Keep,
-	Zero,
-	Replace,
-	Increament,
-	IncreamentWrap,
-	Decrement,
-	DecrementWrap,
-	Invert
+    Keep,
+    Zero,
+    Replace,
+    Increament,
+    IncreamentWrap,
+    Decrement,
+    DecrementWrap,
+    Invert
 };
 GLenum toGLStencilOp(StencilOp op);
 
 enum class BlendFunc
 {
-	Zero,
-	One,
-	SrcColor,
-	OneMinusSrcColor,
-	DstColor,
-	OneMinusDstColor,
-	SrcAlpha,
-	OneMinusSrcAlpha,
-	DstAlpha,
-	OneMinusDstAlpha,
-	ConstantColor,
-	OneMinusConstantColor,
-	ConstantAlpha,
-	OneMinusConstantAlpha
+    Zero,
+    One,
+    SrcColor,
+    OneMinusSrcColor,
+    DstColor,
+    OneMinusDstColor,
+    SrcAlpha,
+    OneMinusSrcAlpha,
+    DstAlpha,
+    OneMinusDstAlpha,
+    ConstantColor,
+    OneMinusConstantColor,
+    ConstantAlpha,
+    OneMinusConstantAlpha
 };
 GLenum toGLBlendFunc(BlendFunc func);
 
 enum class BlendEquation
 {
-	Add,
-	Subtract,
-	ReverseSubtract
+    Add,
+    Subtract,
+    ReverseSubtract
 };
 GLenum toGLBlendEquation(BlendEquation mode);
 
 enum class CullFace
 {
-	Front,
-	Back,
-	FrontAndBack
+    Front,
+    Back,
+    FrontAndBack
 };
 GLenum toGLCullFace(CullFace mode);
 
 enum class FrontFace
 {
-	CW,
-	CCW
+    CW,
+    CCW
 };
 GLenum toGLFrontFace(FrontFace mode);

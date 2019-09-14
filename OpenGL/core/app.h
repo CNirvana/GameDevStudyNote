@@ -12,5 +12,8 @@
 #include "resources.h"
 #include "shader.h"
 #include "texture.h"
+#include "renderer/indexbuffer.h"
+#include "renderer/indexbuffer.h"
+#include "renderer/vertexarray.h"
 
 #include "entrypoint.h"

@@ -26,6 +26,8 @@ set(CHAPTERS
     FrameBuffer
     Shadow
     Lighting
+    Basic
+    Test
 )
 
 foreach(CHAPTER ${CHAPTERS})
