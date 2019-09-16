@@ -6,10 +6,10 @@ layout (location = 2) in vec2 n_Texcoord;
 ```
 
 # Uniform
-- u_mvp
-- u_projection
-- u_view
-- u_model
+- u_viewProjectionMatrix
+- u_projectionMatrix
+- u_viewMatrix
+- u_modelMatrix
 - u_worldToObj
 - u_cameraPos
 
@@ -18,12 +18,6 @@ layout (location = 2) in vec2 n_Texcoord;
 - u_time
 - u_skybox
 - u_ambient
-
-# Texture
-- u_texture_diffuse{index}
-- u_texture_specular{index}
-- u_texture_normal{index}
-- u_texture_height{index}
 
 # Lighting
 

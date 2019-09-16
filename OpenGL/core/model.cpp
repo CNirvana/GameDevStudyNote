@@ -165,7 +165,7 @@ std::vector<Texture*> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType
 
         if (!skip)
         {
-            textures.push_back(new Texture(texturePath, {convertAssimpTextureType(type), TextureWrapMode::Clamp, TextureFilterMode::Bilinear, true }));
+            // textures.push_back(new Texture(texturePath, {convertAssimpTextureType(type), TextureWrapMode::Clamp, TextureFilterMode::Bilinear, true }));
         }
     }
 

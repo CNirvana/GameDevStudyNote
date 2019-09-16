@@ -15,7 +15,7 @@ struct TextureProperty
 class Texture : IGLResource
 {
 public:
-    Texture(const std::string& path, const TextureProperty& textureProperty);
+    Texture(const std::string& name, const std::string& path, const TextureProperty& textureProperty);
 
     void bind(unsigned int slot) const
     {
@@ -23,12 +23,14 @@ public:
         GL_CALL(glBindTexture(GL_TEXTURE_2D, m_ID));
     }
 
+    const std::string& getName() const { return m_Name; }
     const std::string& getPath() const { return m_Path; }
     TextureType getTextureType() const { return m_Property.type; }
 
     virtual void release() override { /*GL_CALL(glDeleteTextures(1, &m_ID));*/ }
 
 private:
+    std::string m_Name;
     std::string m_Path;
     unsigned int m_ID;
     TextureProperty m_Property;

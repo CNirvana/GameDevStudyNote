@@ -17,9 +17,9 @@ public:
         return m_Instance;
     }
 
-    static Texture* loadTexture(const std::string& path, const TextureProperty& textureProperty)
+    static Texture* loadTexture(const std::string& name, const std::string& path, const TextureProperty& textureProperty)
     {
-        return getInstance()->loadTextureInternal(path, textureProperty);
+        return getInstance()->loadTextureInternal(name, path, textureProperty);
     }
     static Shader* loadShaderFromFile(const std::string& name, const char* vertexPath, const char* fragmentPath, const char* geometryPath = nullptr)
     {
@@ -34,7 +34,7 @@ public:
     static void unloadAll() { getInstance()->unloadAllInternal(); }
 
 protected:
-    Texture* loadTextureInternal(const std::string& path, const TextureProperty& textureProperty);
+    Texture* loadTextureInternal(const std::string& name, const std::string& path, const TextureProperty& textureProperty);
     Shader* loadShaderFromFileInternal(const std::string& name, const char* vertexPath, const char* fragmentPath, const char* geometryPath);
     Shader* loadShaderFromSourceInternal(const std::string& name, const char* vSource, const char* fSource, const char* gSource);
     void unloadAllInternal();

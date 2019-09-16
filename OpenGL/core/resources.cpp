@@ -2,15 +2,15 @@
 
 Resources* Resources::m_Instance = nullptr;
 
-Texture* Resources::loadTextureInternal(const std::string& path, const TextureProperty& textureProperty)
+Texture* Resources::loadTextureInternal(const std::string& name, const std::string& path, const TextureProperty& textureProperty)
 {
-    if (m_Textures.find(path) == m_Textures.end())
+    if (m_Textures.find(name) == m_Textures.end())
     {
-        Texture* texture = new Texture(path, textureProperty);
-        m_Textures.insert(std::make_pair(path, texture));
+        Texture* texture = new Texture(name, path, textureProperty);
+        m_Textures.insert(std::make_pair(name, texture));
     }
 
-    return m_Textures[path];
+    return m_Textures[name];
 }
 
 Shader* Resources::loadShaderFromFileInternal(const std::string& name, const char* vertexPath, const char* fragmentPath, const char* geometryPath)
@@ -47,14 +47,14 @@ Shader* Resources::getShader(const std::string& name)
     return getInstance()->m_Shaders[name];
 }
 
-Texture* Resources::getTexture(const std::string& path)
+Texture* Resources::getTexture(const std::string& name)
 {
-    if (getInstance()->m_Textures.find(path) == getInstance()->m_Textures.end())
+    if (getInstance()->m_Textures.find(name) == getInstance()->m_Textures.end())
     {
         return nullptr;
     }
 
-    return getInstance()->m_Textures[path];
+    return getInstance()->m_Textures[name];
 }
 
 void Resources::unloadAllInternal()

@@ -32,17 +32,7 @@ void Mesh::bindTextures(Shader* shader) const
 
     for (size_t i = 0; i < textures.size(); i++)
     {
-        std::string name;
-        if (textures[i]->getTextureType() == TextureType::Diffuse)
-            name = "u_texture_diffuse" + std::to_string(diffuseNr++);
-        else if (textures[i]->getTextureType() == TextureType::Specular)
-            name = "u_texture_specular" + std::to_string(specularNr++);
-        else if (textures[i]->getTextureType() == TextureType::Normal)
-            name = "u_texture_normal" + std::to_string(normalNr++);
-        else if (textures[i]->getTextureType() == TextureType::Height)
-            name = "u_texture_height" + std::to_string(heightNr++);
-
-        shader->setInt(name, i);
+        shader->setInt(textures[i]->getName(), i);
         textures[i]->bind(i);
     }
 }
@@ -57,7 +47,7 @@ void Mesh::drawWithShader(const Renderer& renderer, Shader* shader)
     bindTextures(shader);
 
     m_VertexArray->bind();
-    GL_CALL(glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0));
+    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
     m_VertexArray->unbind();
 
     unbindTextures();
@@ -68,7 +58,7 @@ void Mesh::drawInstanced(const Shader& shader, int amount) const
     bindTextures(m_Shader);
 
     m_VertexArray->bind();
-    GL_CALL(glDrawElementsInstanced(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0, amount));
+    glDrawElementsInstanced(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0, amount);
     m_VertexArray->unbind();
 
     unbindTextures();
